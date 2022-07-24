@@ -1,24 +1,23 @@
-const http = require('http');
+const express = require('express');
 const fs = require('fs');
+const app = express();
 
-const server = http.createServer((req, res) => {
-  res.setHeader('Content-Type', 'text/html');
-  const fileName = req.url === '/' ? './index.html' : '.' + req.url;
-  const file = fs.readFile(fileName, (err, data) => {
-    if(err) {
-      fs.readFile('./404.html', (err, data) => {
-        res.statusCode = 404;
-        res.write(data);
-        res.end();
-      });
-    } else {
-      res.statusCode = 200;
-      res.write(data);
-      res.end();
-    };
-  });
+app.get('/', function(req, res) {
+  res.sendFile(__dirname + '/index.html');
 });
 
-server.listen('8080', () => {
-  console.log('Listening to port 8080');
+app.get('/about', function(req, res) {
+  res.sendFile(__dirname + '/about.html');
+});
+
+app.get('/contact-me', function(req, res) {
+  res.sendFile(__dirname + '/contact-me.html');
+});
+
+app.use(function(req, res, next) {
+  res.status(404).sendFile(__dirname + '/404.html');
+});
+
+app.listen(8080, () => {
+  console.log('Listening on port 8080');
 });
